@@ -9,4 +9,17 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+
+  // 🔥 ADDED — PRODUCTION BUILD OPTIMIZATION (VERCEL SAFE)
+  build: {
+    chunkSizeWarningLimit: 2000, // allow larger bundles
+
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+        },
+      },
+    },
+  },
 });
