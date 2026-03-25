@@ -1,0 +1,66 @@
+.assign-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.assign-modal {
+  width: 480px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+  position: relative;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #000;
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cleaner-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cleaner-card {
+  padding: 14px;
+  background: #f7f9fc;
+  border: 1px solid #e3e7ef;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.15s ease-in-out;
+}
+
+.cleaner-card:hover {
+  background: #e8f3ff;
+  border-color: #1a73e8;
+}
+
+.cleaner-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1d2b3a;
+}
+
+.cleaner-status,
+.cleaner-state {
+  font-size: 14px;
+  color: #444;
+}

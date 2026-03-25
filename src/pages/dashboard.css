@@ -1,0 +1,77 @@
+.dashboard-container {
+  width: 100%;
+  padding: 20px;
+}
+
+.dashboard-title {
+  text-align: center;
+  font-size: 44px;
+  font-weight: 700;
+  color: #1d2b3a;
+  margin-bottom: 30px;
+}
+
+.section-title {
+  text-align: left;
+  font-size: 30px;
+  font-weight: 600;
+  color: #1d2b3a;
+  margin: 20px 0;
+  padding-left: 40px;
+}
+
+.graph-box {
+  width: 85%;
+  height: 450px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px 30px;
+  border: 1px solid #eef2f5;
+  box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.08);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* RECENT ORDERS TABLE */
+.table-box {
+  width: 85%;
+  margin: 30px auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #eef2f5;
+}
+
+.recent-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.recent-table th,
+.recent-table td {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 16px;
+  color: #1d2b3a;
+  border-bottom: 1px solid #eee;
+}
+
+.recent-table th {
+  font-weight: 700;
+  background: #f7f9fc;
+}
+
+.recent-table tr:last-child td {
+  border-bottom: none;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+  color: #666;
+}

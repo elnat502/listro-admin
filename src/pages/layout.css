@@ -1,0 +1,45 @@
+/* ================= ADMIN LAYOUT ================= */
+.admin-shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f6f8fb;
+}
+
+/* ================= SIDEBAR ================= */
+/* Sidebar is FIXED, so main content must offset it */
+.admin-sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: #ffffff;
+  border-right: 1px solid #e6ecf5;
+}
+
+/* ================= MAIN CONTENT ================= */
+/* Critical fix: push content to the right of sidebar */
+.admin-main {
+  flex: 1;
+  margin-left: 260px;       /* 🔑 MATCH sidebar width */
+  padding: 32px 40px;
+  min-width: 0;             /* prevents overflow */
+  overflow-x: auto;
+}
+
+/* ================= MOBILE FIX ================= */
+@media (max-width: 900px) {
+  .admin-shell {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    min-width: 100%;
+    position: relative;
+    border-right: none;
+    border-bottom: 1px solid #e6ecf5;
+  }
+
+  .admin-main {
+    margin-left: 0;         /* remove offset on mobile */
+    padding: 20px;
+  }
+}

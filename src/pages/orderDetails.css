@@ -1,0 +1,96 @@
+/* Container */
+.order-details-container {
+  width: 100%;
+  padding: 30px;
+}
+
+/* Title */
+.details-title {
+  font-size: 48px;
+  font-weight: 800;
+  color: #162d3a;
+  margin-bottom: 30px;
+}
+
+/* Back Button (Uber Dark Style) */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 24px;
+  background: #111827;   /* Dark Uber Style */
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: 600;
+  border-radius: 999px;
+  cursor: pointer;
+  border: none;
+  margin-bottom: 28px;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.back-btn:hover {
+  background: #0f172a;
+  transform: translateY(-1px);
+}
+
+/* Card Box */
+.details-card {
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 16px;
+  border: 1px solid #e3e7eb;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+  margin-bottom: 25px;
+}
+
+.details-card p {
+  font-size: 20px;
+  margin: 10px 0;
+}
+
+/* Status message if completed */
+.status-message-completed {
+  font-size: 20px;
+  font-weight: 700;
+  color: #16a34a;
+  margin-top: 6px;
+}
+
+/* Mark Complete Button (Uber Clean) */
+.mark-complete-btn {
+  margin-top: 20px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  border: none;
+  background: #10b981; /* Green */
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.35);
+}
+
+.mark-complete-btn:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(16, 185, 129, 0.45);
+}
+
+.mark-complete-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Error text */
+.error-text {
+  font-size: 20px;
+  font-weight: 600;
+  color: red;
+  margin-top: 10px;
+}

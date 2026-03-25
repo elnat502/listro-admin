@@ -1,0 +1,362 @@
+/* =============================== 
+   GLOBAL RESET
+================================ */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont;
+  background: #f6f8fb;
+  color: #1f2937;
+}
+
+/* ===============================
+   PAGE LAYOUT
+================================ */
+.page-container {
+  padding: 32px;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+/* ===============================
+   TABLE
+================================ */
+.table-box,
+.orders-box {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  overflow-x: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  text-align: left;
+  padding: 14px;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+  color: #0f172a;
+}
+
+tbody td {
+  padding: 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* ===============================
+   BUTTONS
+================================ */
+.btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+
+.btn-primary,
+.btn-view {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-assign {
+  background: #4f46e5;
+  color: white;
+}
+
+.btn-complete {
+  background: #16a34a;
+  color: white;
+}
+
+.btn-danger,
+.btn-reject {
+  background: #dc2626;
+  color: white;
+}
+
+.btn-ghost {
+  background: #f1f5f9;
+  color: #1f2937;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ===============================
+   STATUS BADGES
+================================ */
+.status-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-approved {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.status-completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-on-duty {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.status-off-duty {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+/* ===============================
+   MODAL OVERLAY
+================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* ===============================
+   MODAL CONTAINER (CRITICAL FIX)
+================================ */
+.modal-content {
+  background: white;
+  border-radius: 18px;
+  width: 560px;
+  max-width: 95%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-content.narrow {
+  width: 480px;
+}
+
+/* ===============================
+   MODAL HEADER
+================================ */
+.modal-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: #f1f5f9;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* ===============================
+   MODAL BODY (FIXES OVERLAP)
+================================ */
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ===============================
+   MODAL FOOTER (STICKY)
+================================ */
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.modal-footer button {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* ===============================
+   ASSIGN CLEANER LIST
+================================ */
+.assign-cleaner-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cleaner-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #f5f9ff;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.cleaner-option:hover {
+  background: #eef4ff;
+}
+
+.cleaner-option.selected {
+  border-color: #2563eb;
+  background: #eef4ff;
+}
+
+.cleaner-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.cleaner-name {
+  font-weight: 700;
+}
+
+.cleaner-meta {
+  font-size: 14px;
+  color: #475569;
+}
+
+/* ===============================
+   FORMS
+================================ */
+.form-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+/* ===============================
+   PAYROLL CONFIRM MODAL (FIX)
+=============================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 9999; /* 🔥 VERY IMPORTANT */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  z-index: 10000; /* 🔥 ABOVE OVERLAY */
+}
+
+.modal h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.modal p {
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+.modal hr {
+  margin: 12px 0;
+  border: none;
+  border-top: 1px solid #e5e7eb;
+}
+
+.modal button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal button:first-child {
+  background: #16a34a;
+  color: white;
+}
+
+.modal button:last-child {
+  background: #e5e7eb;
+}
+.card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  flex: 1;
+}
