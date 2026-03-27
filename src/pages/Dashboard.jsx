@@ -98,7 +98,9 @@ export default function Dashboard() {
         const date = new Date(d.createdAt.seconds * 1000);
         const key = date.toISOString().slice(0, 10);
 
-        map[key] = (map[key] || 0) + (d.total || 0);
+       map[key] =
+  (map[key] || 0) +
+  (d.totalPrice || d.total || d.price || 0);
       });
 
       const result = Object.entries(map)
