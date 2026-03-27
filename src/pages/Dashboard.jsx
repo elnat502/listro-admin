@@ -103,9 +103,19 @@ export default function Dashboard() {
   (d.totalPrice || d.total || d.price || 0);
       });
 
-      const result = Object.entries(map)
-        .map(([date, total]) => ({ date, total }))
-        .slice(-7);
+     const result = [];
+
+for (let i = 6; i >= 0; i--) {
+  const d = new Date();
+  d.setDate(d.getDate() - i);
+
+  const key = d.toISOString().slice(0, 10);
+
+  result.push({
+    date: key,
+    total: map[key] || 0,
+  });
+}
 
       setChartData(result);
     };
