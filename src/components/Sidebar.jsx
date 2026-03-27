@@ -20,11 +20,26 @@ import {
 } from "react-icons/md";
 import "./sidebar.css";
 
+/* ✅ ADDED */
+import { signOut } from "firebase/auth";
+import { auth } from "../config/firebase";
+
 export default function Sidebar() {
   const navigate = useNavigate();
 
-  const logout = () => {
+  const logout = async () => {
+    /* ✅ ADDED CONFIRM */
+    const confirmLogout = window.confirm(
+      "Are you sure you want to logout?"
+    );
+    if (!confirmLogout) return;
+
+    /* ❌ OLD (kept but no longer needed for auth safety) */
     localStorage.removeItem("admin");
+
+    /* ✅ ADDED FIREBASE LOGOUT */
+    await signOut(auth);
+
     navigate("/login", { replace: true });
   };
 
