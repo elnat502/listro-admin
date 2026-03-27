@@ -112,7 +112,10 @@ for (let i = 6; i >= 0; i--) {
   const key = d.toISOString().slice(0, 10);
 
   result.push({
-    date: key,
+   date: d.toLocaleDateString("en-GB", {
+  day: "2-digit",
+  month: "short",
+}),
     total: map[key] || 0,
   });
 }
