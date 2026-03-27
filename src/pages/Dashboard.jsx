@@ -82,6 +82,7 @@ export default function Dashboard() {
 
       const cleaningMap = {};
       const shopMap = {};
+      const profitMap = {};
       const totalMap = {};
 
       /* 🔵 CLEANING ORDERS */
@@ -115,7 +116,17 @@ export default function Dashboard() {
         shopMap[key] = (shopMap[key] || 0) + amount;
         totalMap[key] = (totalMap[key] || 0) + amount;
       });
+// 💰 CALCULATE PROFIT (simple version)
+Object.keys(totalMap).forEach((key) => {
+  const revenue = totalMap[key] || 0;
 
+  // 🔥 TEMP: basic estimation (we upgrade later)
+  const payroll = 0;
+  const refunds = 0;
+  const losses = 0;
+
+  profitMap[key] = revenue - payroll - refunds - losses;
+});
       /* 📊 LAST 7 DAYS */
       const result = [];
 
@@ -133,6 +144,7 @@ export default function Dashboard() {
           total: totalMap[key] || 0,
           cleaning: cleaningMap[key] || 0,
           shop: shopMap[key] || 0,
+          profit: profitMap[key] || 0,
         });
       }
 
@@ -188,6 +200,7 @@ export default function Dashboard() {
             <Line type="monotone" dataKey="total" stroke="#4f46e5" />
             <Line type="monotone" dataKey="cleaning" stroke="#22c55e" />
             <Line type="monotone" dataKey="shop" stroke="#f59e0b" />
+            <Line type="monotone" dataKey="profit" stroke="#ef4444" />
           </LineChart>
         </ResponsiveContainer>
       </div>
