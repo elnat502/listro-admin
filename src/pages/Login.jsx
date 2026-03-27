@@ -14,8 +14,15 @@ export default function Login() {
     try {
       setLoading(true);
 
+      const cleanEmail = email.trim();
+
+      if (!cleanEmail || !password) {
+        alert("Please enter your email and password.");
+        return;
+      }
+
       // 1️⃣ Firebase Authentication
-      const res = await signInWithEmailAndPassword(auth, email, password);
+      const res = await signInWithEmailAndPassword(auth, cleanEmail, password);
       const user = res.user;
       const uid = user.uid;
 
@@ -35,7 +42,11 @@ export default function Login() {
       const admin = snap.data();
 
       // 4️⃣ Allow BOTH admin & superadmin
-      const isAdmin = admin.role === "admin" || admin.role === "superadmin";
+      const isAdmin =
+        admin.role === "admin" ||
+        admin.role === "superadmin" ||
+        admin.isAdmin === true;
+
       const isActive = admin.active !== false;
 
       if (!isAdmin || !isActive) {
@@ -47,10 +58,32 @@ export default function Login() {
       // 5️⃣ Success → let RequireAdmin handle protection
       navigate("/", { replace: true });
     } catch (err) {
-      console.error(err);
-      alert("Login failed: " + err.message);
+      console.error("Login failed:", err);
+
+      let message = "Login failed. Please try again.";
+
+      if (
+        err?.code === "auth/invalid-credential" ||
+        err?.code === "auth/wrong-password" ||
+        err?.code === "auth/user-not-found" ||
+        err?.code === "auth/invalid-email"
+      ) {
+        message = "Invalid email or password.";
+      } else if (err?.code === "auth/too-many-requests") {
+        message = "Too many failed attempts. Please try again later.";
+      } else if (err?.code === "auth/network-request-failed") {
+        message = "Network error. Please check your internet connection.";
+      }
+
+      alert(message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !loading) {
+      handleLogin();
     }
   };
 
@@ -62,6 +95,8 @@ export default function Login() {
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        onKeyDown={handleKeyDown}
+        autoComplete="email"
       />
 
       <input
@@ -69,6 +104,8 @@ export default function Login() {
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        onKeyDown={handleKeyDown}
+        autoComplete="current-password"
       />
 
       <button onClick={handleLogin} disabled={loading}>
