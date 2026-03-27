@@ -2,23 +2,31 @@ import React, { useEffect, useState } from "react";
 import { getDashboardStats } from "../services/dashboardService";
 import "../admin.css";
 
+/* ✅ ADDED — CHART LIBRARY */
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+/* ✅ ADDED — FIRESTORE */
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../config/firebase";
+
 /**
  * ===============================
  * LISTRO COMPANY DASHBOARD
- * - Customer Revenue
- * - Cleaner Payroll
- * - Emergency Loss
- * - Refunds
- * - Net Profit
- * - Cleaner Availability
  * ===============================
  */
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
     totalRevenue: 0,
-    cleaningRevenue: 0, // ✅ ADDED
-    shopRevenue: 0,     // ✅ ADDED
+    cleaningRevenue: 0,
+    shopRevenue: 0,
     todayRevenue: 0,
     cleanerPayroll: 0,
     emergencyCost: 0,
@@ -31,6 +39,9 @@ export default function Dashboard() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  /* ✅ ADDED — CHART STATE */
+  const [chartData, setChartData] = useState([]);
 
   /* ===============================
      LOAD DASHBOARD STATS
@@ -45,8 +56,8 @@ export default function Dashboard() {
 
         setStats({
           totalRevenue: Number(data?.totalRevenue) || 0,
-          cleaningRevenue: Number(data?.cleaningRevenue) || 0, // ✅ ADDED
-          shopRevenue: Number(data?.shopRevenue) || 0,         // ✅ ADDED
+          cleaningRevenue: Number(data?.cleaningRevenue) || 0,
+          shopRevenue: Number(data?.shopRevenue) || 0,
           todayRevenue: Number(data?.todayRevenue) || 0,
           cleanerPayroll: Number(data?.cleanerPayroll) || 0,
           emergencyCost: Number(data?.emergencyCost) || 0,
@@ -70,6 +81,36 @@ export default function Dashboard() {
     };
   }, []);
 
+  /* ✅ ADDED — FETCH REVENUE FOR CHART */
+  useEffect(() => {
+    const fetchRevenue = async () => {
+      const snap = await getDocs(collection(db, "orders"));
+
+      const map = {};
+
+      snap.forEach((doc) => {
+        const d = doc.data();
+
+        if (d.jobStatus !== "completed") return;
+
+        if (!d.createdAt) return;
+
+        const date = new Date(d.createdAt.seconds * 1000);
+        const key = date.toISOString().slice(0, 10);
+
+        map[key] = (map[key] || 0) + (d.total || 0);
+      });
+
+      const result = Object.entries(map)
+        .map(([date, total]) => ({ date, total }))
+        .slice(-7);
+
+      setChartData(result);
+    };
+
+    fetchRevenue();
+  }, []);
+
   if (loading) {
     return <p className="page-container">Loading dashboard…</p>;
   }
@@ -88,7 +129,6 @@ export default function Dashboard() {
       <h1 className="page-title">Listro Company Dashboard</h1>
 
       <div className="stats-grid">
-        {/* ✅ UPDATED */}
         <StatCard title="Total Revenue" value={`${stats.totalRevenue} AED`} />
         <StatCard title="Cleaning Revenue" value={`${stats.cleaningRevenue} AED`} />
         <StatCard title="Shop Revenue" value={`${stats.shopRevenue} AED`} />
@@ -102,6 +142,20 @@ export default function Dashboard() {
         <StatCard title="Completed Orders" value={stats.completedCount} />
         <StatCard title="Available Cleaners" value={stats.availableCleaners} />
         <StatCard title="Busy Cleaners" value={stats.busyCleaners} />
+      </div>
+
+      {/* ✅ ADDED — REVENUE CHART */}
+      <div style={{ width: "100%", height: 300, marginTop: 40 }}>
+        <h3>Last 7 Days Revenue</h3>
+
+        <ResponsiveContainer>
+          <LineChart data={chartData}>
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="total" stroke="#4f46e5" />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
