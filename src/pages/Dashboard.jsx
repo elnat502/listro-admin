@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { getDashboardStats } from "../services/dashboardService";
 import "../admin.css";
 
-/* ✅ ADDED — CHART LIBRARY */
 import {
   LineChart,
   Line,
@@ -12,15 +11,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-/* ✅ ADDED — FIRESTORE */
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../config/firebase";
-
-/**
- * ===============================
- * LISTRO COMPANY DASHBOARD
- * ===============================
- */
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -40,7 +32,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  /* ✅ ADDED — CHART STATE */
   const [chartData, setChartData] = useState([]);
 
   /* ===============================
@@ -81,44 +72,69 @@ export default function Dashboard() {
     };
   }, []);
 
-  /* ✅ ADDED — FETCH REVENUE FOR CHART */
+  /* ===============================
+     FETCH REVENUE FOR CHART (FIXED)
+  =============================== */
   useEffect(() => {
     const fetchRevenue = async () => {
-      const snap = await getDocs(collection(db, "orders"));
+      const ordersSnap = await getDocs(collection(db, "orders"));
+      const shopSnap = await getDocs(collection(db, "shopOrders"));
 
-      const map = {};
+      const cleaningMap = {};
+      const shopMap = {};
+      const totalMap = {};
 
-      snap.forEach((doc) => {
+      /* 🔵 CLEANING ORDERS */
+      ordersSnap.forEach((doc) => {
         const d = doc.data();
 
         if (d.jobStatus !== "completed") return;
-
         if (!d.createdAt) return;
 
         const date = new Date(d.createdAt.seconds * 1000);
         const key = date.toISOString().slice(0, 10);
 
-       map[key] =
-  (map[key] || 0) +
-  (d.totalPrice || d.total || d.price || 0);
+        const amount = d.totalPrice || d.total || d.price || 0;
+
+        cleaningMap[key] = (cleaningMap[key] || 0) + amount;
+        totalMap[key] = (totalMap[key] || 0) + amount;
       });
 
-     const result = [];
+      /* 🟠 SHOP ORDERS */
+      shopSnap.forEach((doc) => {
+        const d = doc.data();
 
-for (let i = 6; i >= 0; i--) {
-  const d = new Date();
-  d.setDate(d.getDate() - i);
+        if (d.orderStatus !== "completed") return;
+        if (!d.createdAt) return;
 
-  const key = d.toISOString().slice(0, 10);
+        const date = new Date(d.createdAt.seconds * 1000);
+        const key = date.toISOString().slice(0, 10);
 
-  result.push({
-   date: d.toLocaleDateString("en-GB", {
-  day: "2-digit",
-  month: "short",
-}),
-    total: map[key] || 0,
-  });
-}
+        const amount = d.totalPrice || d.total || 0;
+
+        shopMap[key] = (shopMap[key] || 0) + amount;
+        totalMap[key] = (totalMap[key] || 0) + amount;
+      });
+
+      /* 📊 LAST 7 DAYS */
+      const result = [];
+
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+
+        const key = d.toISOString().slice(0, 10);
+
+        result.push({
+          date: d.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+          }),
+          total: totalMap[key] || 0,
+          cleaning: cleaningMap[key] || 0,
+          shop: shopMap[key] || 0,
+        });
+      }
 
       setChartData(result);
     };
@@ -159,7 +175,7 @@ for (let i = 6; i >= 0; i--) {
         <StatCard title="Busy Cleaners" value={stats.busyCleaners} />
       </div>
 
-      {/* ✅ ADDED — REVENUE CHART */}
+      {/* 📊 CHART */}
       <div style={{ width: "100%", height: 300, marginTop: 40 }}>
         <h3>Last 7 Days Revenue</h3>
 
@@ -168,7 +184,10 @@ for (let i = 6; i >= 0; i--) {
             <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
+
             <Line type="monotone" dataKey="total" stroke="#4f46e5" />
+            <Line type="monotone" dataKey="cleaning" stroke="#22c55e" />
+            <Line type="monotone" dataKey="shop" stroke="#f59e0b" />
           </LineChart>
         </ResponsiveContainer>
       </div>
