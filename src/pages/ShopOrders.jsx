@@ -41,7 +41,27 @@ const getShopOrderTotal = (order) =>
 export default function ShopOrders() {
   const [orders, setOrders] = useState([]);
   const [cleaners, setCleaners] = useState([]);
+const getLocation = (order) => {
+  return order.deliveryLocation || order.pickupLocation;
+};
+const shareOnWhatsApp = (order) => {
+  const location = getLocation(order);
+  if (!location) return;
 
+  const message = `
+🚚 Listro Delivery
+
+Customer: ${order.deliveryAddress?.fullName}
+Phone: ${order.deliveryAddress?.phone}
+Total: ${order.total} AED
+
+📍 Location:
+https://www.google.com/maps?q=${location.lat},${location.lng}
+  `;
+
+  const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+};
   useEffect(() => {
     const q = query(collection(db, "shopOrders"), orderBy("createdAt", "desc"));
 
@@ -252,6 +272,49 @@ export default function ShopOrders() {
               <b>Customer:</b> {o.deliveryAddress?.fullName} <br />
               <b>Phone:</b> {o.deliveryAddress?.phone} <br />
               <b>Address:</b> {o.deliveryAddress?.addressLine}
+   {(() => {
+  const location = getLocation(o);
+  if (!location) return null;
+
+  return (
+    <div style={{ marginTop: 10, display: "flex", gap: 10 }}>
+      
+      {/* 📍 OPEN MAP */}
+      <a
+        href={`https://www.google.com/maps?q=${location.lat},${location.lng}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          background: "#000",
+          color: "#fff",
+          padding: "8px 12px",
+          borderRadius: 8,
+          textDecoration: "none",
+          fontSize: 13,
+        }}
+      >
+        📍 Open Map
+      </a>
+
+      {/* 📲 WHATSAPP */}
+      <button
+        onClick={() => shareOnWhatsApp(o)}
+        style={{
+          background: "#25D366",
+          color: "#fff",
+          border: "none",
+          padding: "8px 12px",
+          borderRadius: 8,
+          cursor: "pointer",
+          fontSize: 13,
+        }}
+      >
+        📲 WhatsApp
+      </button>
+
+    </div>
+  );
+})()}
             </p>
 
             {o.assignedCleanerName && (

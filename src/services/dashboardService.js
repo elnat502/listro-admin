@@ -54,7 +54,11 @@ export async function getDashboardStats() {
      🛍 SHOP LEDGER
   =============================== */
   const shopLedgerRef = collection(db, "companyLedger");
-  const shopLedgerSnap = await getDocs(shopLedgerRef);
+  const shopLedgerQuery = query(
+    shopLedgerRef,
+    where("createdAt", ">=", Timestamp.fromDate(startOfMonth))
+  );
+  const shopLedgerSnap = await getDocs(shopLedgerQuery);
 
   const ordersRef = collection(db, "orders");
   const ordersQuery = query(ordersRef, where("listroId", "==", LISTRO_ID));
@@ -71,6 +75,16 @@ export async function getDashboardStats() {
   let shopRevenue = 0;
 
   /* ===============================
+     ✅ FIX HELPERS
+  =============================== */
+  const serviceOrderIds = new Set();
+  ordersSnap.forEach((d) => {
+    serviceOrderIds.add(d.id);
+  });
+
+  const cleaningLedgerOrderIds = new Set();
+
+  /* ===============================
      CLEANING REVENUE
   =============================== */
   ledgerSnap.forEach((d) => {
@@ -83,10 +97,15 @@ export async function getDashboardStats() {
       cleaningRevenue += amount;
     }
 
-    // ✅ FIX: TODAY REVENUE FROM CLEANING LEDGER
+    /* ✅ FIX — remember service orders already counted in ledger */
+    if (l.orderId) {
+      cleaningLedgerOrderIds.add(l.orderId);
+    }
+
+    /* ✅ TODAY REVENUE FROM CLEANING LEDGER */
     if (l.completedAt instanceof Timestamp) {
       const dt = l.completedAt.toDate();
-      if (dt >= startOfToday) {
+      if (dt >= startOfToday && dt <= now) {
         todayRevenue += amount;
       }
     }
@@ -98,22 +117,28 @@ export async function getDashboardStats() {
   shopLedgerSnap.forEach((d) => {
     const l = d.data();
 
-    if (l.type === "shop_order_cod" || l.type === "cod") {
-      const amount = Number(l.amount || 0);
+    /* ✅ FIX — skip generic COD rows that belong to service orders,
+       because those are already counted through cleaning ledger */
+    // ✅ ONLY include real shop revenue
+const isShopOrder =
+  l.type === "shop_order_cod" ||
+  l.orderType === "shop" ||
+  l.source === "shop";
 
-      monthRevenue += amount;
-      shopRevenue += amount;
+if (!isShopOrder) return;
 
-     if (
-  l.completedAt instanceof Timestamp &&
-  (l.type === "shop_order_cod" || l.type === "cod")
-) {
+const amount = Number(l.amount || 0);
+
+monthRevenue += amount;
+shopRevenue += amount;
+
+if (l.completedAt instanceof Timestamp) {
   const dt = l.completedAt.toDate();
 
-  if (dt >= startOfToday && dt <= new Date()) {
+  if (dt >= startOfToday && dt <= now) {
     todayRevenue += amount;
   }
-}
+
     }
   });
 
@@ -136,22 +161,25 @@ export async function getDashboardStats() {
         (Number(o.subtotal || 0) + Number(o.deliveryFee || 0)) ||
         0;
 
-      if (!o.orderType || o.orderType !== "shop") {
+      /* ✅ FIX — only fallback for completed service orders
+         NOT already counted in cleaning ledger */
+      const alreadyCountedInLedger = cleaningLedgerOrderIds.has(d.id);
+
+      if ((!o.orderType || o.orderType !== "shop") && !alreadyCountedInLedger) {
         cleaningRevenue += value;
         monthRevenue += value;
+
+        if (
+          o.completedAt instanceof Timestamp &&
+          (o.jobStatus === "completed" || o.orderStatus === "completed")
+        ) {
+          const dt = o.completedAt.toDate();
+
+          if (dt >= startOfToday && dt <= now) {
+            todayRevenue += value;
+          }
+        }
       }
-
-      // ✅ FIXED BLOCK (THIS WAS BROKEN)
-     if (
-  o.completedAt instanceof Timestamp &&
-  (o.jobStatus === "completed" || o.orderStatus === "completed")
-) {
-  const dt = o.completedAt.toDate();
-
-  if (dt >= startOfToday && dt <= new Date()) {
-    todayRevenue += value;
-  }
-}
     }
   });
 

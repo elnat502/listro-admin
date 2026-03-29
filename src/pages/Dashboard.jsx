@@ -86,20 +86,20 @@ export default function Dashboard() {
       const totalMap = {};
 
       /* 🔵 CLEANING ORDERS */
-      ordersSnap.forEach((doc) => {
-        const d = doc.data();
+     ordersSnap.forEach((doc) => {
+  const d = doc.data();
 
-        if (d.jobStatus !== "completed") return;
-        if (!d.createdAt) return;
+  if (d.jobStatus !== "completed") return;
+  if (!d.completedAt) return;
 
-        const date = new Date(d.createdAt.seconds * 1000);
-        const key = date.toISOString().slice(0, 10);
+  const date = new Date(d.completedAt.seconds * 1000);
+  const key = date.toISOString().slice(0, 10);
 
-        const amount = d.totalPrice || d.total || d.price || 0;
+  const amount = Number(d.totalPrice || 0);
 
-        cleaningMap[key] = (cleaningMap[key] || 0) + amount;
-        totalMap[key] = (totalMap[key] || 0) + amount;
-      });
+  cleaningMap[key] = (cleaningMap[key] || 0) + amount;
+  totalMap[key] = (totalMap[key] || 0) + amount;
+});
 
       /* 🟠 SHOP ORDERS */
       shopSnap.forEach((doc) => {
